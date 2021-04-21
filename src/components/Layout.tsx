@@ -25,9 +25,9 @@ const Layout = (props: any) => {
   }, []);
 
   return (
-    <div className="App">
-      <header className="App-header"></header>
-      {props.children}
+    <div className="layout">
+      <div className="header"></div>
+      <div className="layout_block">{props.children}</div>
     </div>
   );
 };

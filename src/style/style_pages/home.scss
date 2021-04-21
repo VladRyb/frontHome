@@ -1,0 +1,40 @@
+.home_container {
+  margin-top: 9rem;
+}
+
+.home_top_block {
+  display: flex;
+  justify-content: space-between;
+  padding: 24px;
+}
+
+.last_container {
+  width: 70%;
+}
+
+.last_block {
+  display: flex;
+  justify-content: space-between;
+  padding: 24px 0px;
+  & div {
+    display: flex;
+    flex-direction: column;
+    & span {
+      margin: 12px 0px;
+    }
+  }
+}
+
+.price_container {
+  width: 15%;
+  background-color: #f7f7f71f;
+  padding: 0px 24px 24px 24px;
+}
+
+.price_block {
+  & div {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+}

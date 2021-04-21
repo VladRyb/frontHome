@@ -6,14 +6,11 @@ import {
   Redirect,
   RouteComponentProps,
 } from "react-router-dom";
-import routes, { getLoginPath, getHomePath } from "./routes";
+import routes, { getHomePath } from "./routes";
 import Login from "./pages/Login";
-import { useDispatch, useSelector } from "react-redux";
-import "./App.css";
-import Cookie from "js-cookie";
-import { LOGIN, setUserCreate } from "./redux/authStore";
+import { useSelector } from "react-redux";
 import Home from "./pages/Home";
-import Layout from "./components/Loyout";
+import Layout from "./components/Layout";
 
 function App() {
   const isAuth = useSelector((state: any) => state.auth.isAuth);

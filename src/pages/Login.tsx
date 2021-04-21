@@ -5,7 +5,14 @@ import { login } from "../api/endpoints/auth";
 import { setUserCreate } from "../redux/authStore";
 import { getHomePath } from "../routes";
 import Cookie from "js-cookie";
-// import { postLogin, postSignup } from "../api/server";
+import {
+  Button,
+  FormControl,
+  FormGroup,
+  Input,
+  InputLabel,
+  TextField,
+} from "@material-ui/core";
 
 function Login() {
   const dispatch = useDispatch();
@@ -29,12 +36,20 @@ function Login() {
     }
   };
   return (
-    <div>
-      <form ref={user} onSubmit={(e) => handleSubmit(e)}>
-        <input type="text" />
-        <input type="password" />
-        <input type="submit" value="JR" />
-      </form>
+    <div className="login_container">
+      <div className="login_form_block box_shadow">
+        <form ref={user} autoComplete="on">
+          <FormControl>
+            <InputLabel id="login-label">Логин</InputLabel>
+            <Input />
+          </FormControl>
+          <FormControl>
+            <InputLabel id="password-label">Пароль</InputLabel>
+            <Input />
+          </FormControl>
+          <Button onClick={handleSubmit}>Войти</Button>
+        </form>
+      </div>
     </div>
   );
 }

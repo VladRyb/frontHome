@@ -1,0 +1,19 @@
+.header {
+  height: 50px;
+}
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.layout_block {
+  width: 1200px;
+}
+
+@media screen and(max-width:1300px) {
+  .layout_block {
+    width: 90%;
+  }
+}

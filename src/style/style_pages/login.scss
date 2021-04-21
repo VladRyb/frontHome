@@ -1,0 +1,21 @@
+.login_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.login_form_block {
+  display: flex;
+  flex-direction: column;
+  width: 400px;
+  height: 300px;
+}
+
+.login_form_block form {
+  padding: 48px;
+  display: flex;
+  height: inherit;
+  flex-direction: column;
+  justify-content: space-between;
+}
