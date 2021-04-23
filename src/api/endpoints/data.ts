@@ -1,7 +1,7 @@
 import server from "../server";
 
-export const getPrice = () => {
-  return server.get(`/price`).then(({ data }) => {
+export const getData = () => {
+  return server.get(`/data`).then(({ data }) => {
     return data;
   });
 };

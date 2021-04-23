@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { getPrice, postPeriod } from "../api/endpoints/price";
+import { getData, postPeriod } from "../api/endpoints/data";
 import {
   Button,
   Dialog,
@@ -9,9 +9,13 @@ import {
   FormControl,
   Input,
   InputLabel,
+  MenuItem,
+  Select,
+  TextField,
   Typography,
 } from "@material-ui/core";
 import { DatePicker } from "@material-ui/pickers";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 
 interface PriceState {
   [key: string]: string | number;
@@ -80,12 +84,21 @@ function Home() {
   const data = useRef<any>(null);
 
   const [price, setPrice] = useState<PriceState | null>(null);
-  const [period, setPeriod] = useState<any>(null);
+  const [lastPeriod, setLastPeriod] = useState<any>(null);
+  const [money, setMoney] = useState<number | null>(null);
+
+  const [periods, setPeriods] = useState<any>(null);
+
   const [open, setOpen] = useState(false);
   const [selectedDate, setSelectedDate] = React.useState(new Date());
 
   const seveData = async () => {
-    if (!data) return;
+    if (
+      data.current[1].value.trim() === "" &&
+      data.current[2].value.trim() === "" &&
+      data.current[3].value.trim() === ""
+    )
+      return;
     try {
       const response = await postPeriod({
         date: data.current[0].value,
@@ -103,15 +116,31 @@ function Home() {
     setSelectedDate(date);
   };
 
-  const calcSum = ({ price, period }: any) => {
-    const res = price.rent + price.rent;
+  const calcSum = (price: any, periods: any) => {
+    const delta = periods.slice(0, 2).reduce((acum: any, elem: any) => ({
+      hot: acum.hot - elem.hot,
+      cold: acum.cold - elem.cold,
+      electricity: acum.electricity - elem.electricity,
+    }));
+
+    const sum =
+      Number(price.hot) * delta.hot +
+      Number(price.cold) * delta.cold +
+      Number(price.electricity) * delta.electricity +
+      Number(price.drainage) * delta.cold +
+      Number(price.drainage) * delta.cold +
+      Number(price.rent) +
+      Number(price.internet);
+
+    setMoney(sum);
   };
 
   const fetchPrice = async () => {
     try {
-      const response = await getPrice();
+      const response = await getData();
       setPrice(response.price);
-      setPeriod(response.period);
+      setPeriods(response.period);
+      setLastPeriod(response.period[0]);
     } catch (error) {}
   };
 
@@ -124,23 +153,53 @@ function Home() {
   };
 
   useEffect(() => {
+    if (periods) {
+      const indexPeriod = periods.findIndex(
+        (item: any) => item._id === lastPeriod._id
+      );
+      const newPeriods = periods.slice(indexPeriod, indexPeriod + 2);
+      calcSum(price, newPeriods);
+    }
+  }, [lastPeriod]);
+
+  useEffect(() => {
     fetchPrice();
   }, []);
+
   return (
     <div>
       <div className="home_container">
         <div className="home_top_block box_shadow">
           <div className="last_container">
-            <div>
+            <div className="last_title">
               <h3>Предыдушие показания</h3>
+              {lastPeriod && (
+                <FormControl style={{ width: 200 }}>
+                  {/* <InputLabel id="demo-simple-select-label">Age</InputLabel> */}
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={lastPeriod || ""}
+                    onChange={(e) => {
+                      setLastPeriod(e.target.value);
+                    }}
+                  >
+                    {periods.map((elem: any) => (
+                      <MenuItem key={elem._id} value={elem}>
+                        {elem.date}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
             </div>
 
-            {period && (
+            {lastPeriod && (
               <div className="last_block">
                 {titlePeriod.map((elem) => (
                   <div key={elem.key}>
                     <span>{elem.title}</span>
-                    <span>{period[elem.key]}</span>
+                    <span>{lastPeriod[elem.key]}</span>
                   </div>
                 ))}
               </div>
@@ -150,7 +209,7 @@ function Home() {
                 <Button onClick={handleOpen}>Добавить новые показания</Button>
               </div>
               <div>
-                <h4>Сумма: 31 300 руб.</h4>
+                <h4>Сумма: {money} руб.</h4>
               </div>
             </div>
           </div>
