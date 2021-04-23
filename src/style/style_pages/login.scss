@@ -19,3 +19,11 @@
   flex-direction: column;
   justify-content: space-between;
 }
+
+.app-auth-password input:focus ~ div {
+  display: flex;
+}
+
+.app-auth-password input ~ div {
+  display: none;
+}

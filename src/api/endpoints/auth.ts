@@ -5,7 +5,7 @@ export const auth = () => {
     return data;
   });
 };
-export const login = (body: any) => {
+export const postLogin = (body: any) => {
   return server.post(`/login`, body).then(({ data }) => {
     return data;
   });

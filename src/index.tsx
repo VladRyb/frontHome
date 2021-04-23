@@ -5,6 +5,9 @@ import App from "./App";
 import { Provider } from "react-redux";
 import { store } from "./redux/store";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
+import { MuiPickersUtilsProvider } from "@material-ui/pickers";
+
+import DateFnsUtils from "@date-io/date-fns";
 
 const theme = createMuiTheme({
   palette: {
@@ -25,11 +28,11 @@ const theme = createMuiTheme({
 ReactDOM.render(
   <Provider store={store}>
     <ThemeProvider theme={theme}>
-      <React.StrictMode>
+      <MuiPickersUtilsProvider utils={DateFnsUtils}>
         <Suspense fallback={<div>Loading... </div>}>
           <App />
         </Suspense>
-      </React.StrictMode>
+      </MuiPickersUtilsProvider>
     </ThemeProvider>
   </Provider>,
   document.getElementById("root")
