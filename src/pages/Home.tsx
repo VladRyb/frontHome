@@ -153,7 +153,7 @@ function Home() {
   };
 
   useEffect(() => {
-    if (periods) {
+    if (periods && periods.length !== 0) {
       const indexPeriod = periods.findIndex(
         (item: any) => item._id === lastPeriod._id
       );
@@ -206,10 +206,10 @@ function Home() {
             )}
             <div className="last_block_bot">
               <div>
-                <Button onClick={handleOpen}>Добавить новые показания</Button>
+                <h4>Сумма: {money} руб.</h4>
               </div>
               <div>
-                <h4>Сумма: {money} руб.</h4>
+                <Button onClick={handleOpen}>Добавить новые показания</Button>
               </div>
             </div>
           </div>

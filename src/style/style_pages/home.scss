@@ -62,3 +62,39 @@
   padding: 8px;
   margin: 24px 56px 36px 56px;
 }
+
+@media screen and (max-width: 450px) {
+  .home_top_block {
+    padding: 8px;
+    flex-direction: column;
+  }
+  .home_container {
+    margin-top: 1rem;
+  }
+
+  .last_container {
+    width: 100%;
+  }
+  .last_title {
+    flex-direction: column;
+  }
+  .last_block_bot {
+    flex-direction: column;
+    & h4 {
+      margin-left: 6px;
+    }
+    & button {
+      background-color: #f7f7f71f;
+      margin-bottom: 24px;
+    }
+  }
+  .price_container {
+    width: auto;
+    padding: 8px;
+  }
+  .modal_body {
+    width: auto;
+    padding: 8px;
+    margin: 0;
+  }
+}
