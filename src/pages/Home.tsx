@@ -11,11 +11,9 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  TextField,
-  Typography,
 } from "@material-ui/core";
 import { DatePicker } from "@material-ui/pickers";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+import Loader from "../components/Loader/Loader";
 
 interface PriceState {
   [key: string]: string | number;
@@ -100,7 +98,7 @@ function Home() {
     )
       return;
     try {
-      const response = await postPeriod({
+      await postPeriod({
         date: data.current[0].value,
         hot: data.current[1].value,
         cold: data.current[2].value,
@@ -160,11 +158,16 @@ function Home() {
       const newPeriods = periods.slice(indexPeriod, indexPeriod + 2);
       calcSum(price, newPeriods);
     }
+    // eslint-disable-next-line
   }, [lastPeriod]);
 
   useEffect(() => {
     fetchPrice();
   }, []);
+
+  if (!periods && !price) {
+    return <Loader />;
+  }
 
   return (
     <div>

@@ -1,0 +1,72 @@
+.container {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  padding: 24px;
+  //   background-color: rgba(0, 0, 0, 0.3);
+}
+
+.loader {
+  flex-shrink: 0;
+  margin: 0 auto;
+}
+
+.spacer {
+  height: 4px;
+}
+.coll {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 50%;
+  width: 150px;
+  height: 150px;
+}
+
+.coll div {
+  background-color: white;
+  width: 15px;
+  border-radius: 4px;
+  /* height: 50px; */
+  animation-name: coll;
+  animation-timing-function: ease-out;
+  animation-duration: 0.5s;
+  animation-iteration-count: infinite;
+}
+.coll div:nth-child(2) {
+  animation-delay: 0.05s;
+}
+.coll div:nth-child(3) {
+  animation-delay: 0.1s;
+}
+.coll div:nth-child(4) {
+  animation-delay: 0.15s;
+}
+.coll div:nth-child(5) {
+  animation-delay: 0.2s;
+}
+.coll div:nth-child(6) {
+  animation-delay: 0.25s;
+}
+
+@keyframes coll {
+  0%,
+  20% {
+    height: 20px;
+    opacity: 0;
+  }
+  50% {
+    height: 80px;
+    opacity: 1;
+  }
+  80%,
+  100% {
+    height: 20px;
+    opacity: 0;
+  }
+}
