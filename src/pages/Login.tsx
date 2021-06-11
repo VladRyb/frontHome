@@ -1,15 +1,20 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { postLogin } from "../api/endpoints/auth";
 import { setUserCreate } from "../redux/authStore";
 import { getHomePath } from "../routes";
 import Cookie from "js-cookie";
 import { Button, TextField } from "@material-ui/core";
+import { alertClose, alertShow } from "../redux/alertStore";
+import { Alert } from "../components/Alert";
 
 function Login() {
   const dispatch = useDispatch();
   const history = useHistory();
+
+  const alert = useSelector((store: any) => store.alert);
+
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
 
@@ -30,15 +35,20 @@ function Login() {
       history.push(getHomePath());
     } catch (error) {
       console.log(error);
+      dispatch(alertShow({ textAlert: "Неправильный логин или пароль" }));
     }
+  };
+
+  const handleCloseAlert = () => {
+    dispatch(alertClose());
   };
 
   return (
     <div className="login_container">
       <div className="login_form_block box_shadow">
-        <form>
+        <form onSubmit={(e) => handleSubmit(e)}>
           <TextField
-            name="login"
+            // name="name"
             label="Логин"
             onChange={(e: any) => setLogin(e.target.value)}
             value={login}
@@ -49,9 +59,15 @@ function Login() {
             onChange={(e: any) => setPassword(e.target.value)}
             value={password}
           />
-          <Button onClick={handleSubmit}>Войти</Button>
+          <Button type="submit">Войти</Button>
         </form>
       </div>
+      {alert.textAlert && (
+        <Alert
+          textAlert={alert.textAlert}
+          handleCloseAlert={handleCloseAlert}
+        />
+      )}
     </div>
   );
 }
