@@ -20,9 +20,35 @@
   justify-content: space-between;
 }
 
+.login_no_value {
+  position: relative;
+  animation-name: login;
+  animation-duration: 0.5s;
+  animation-direction: inherit;
+  animation-timing-function: ease-in-out;
+}
+
 @media screen and (max-width: 450px) {
   .login_form_block {
     width: 100%;
     height: 300px;
+  }
+}
+
+@keyframes login {
+  0% {
+    left: -4px;
+  }
+  25% {
+    left: 4px;
+  }
+  50% {
+    left: -4px;
+  }
+  75% {
+    left: 4px;
+  }
+  100% {
+    left: 0px;
   }
 }

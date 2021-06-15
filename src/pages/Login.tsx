@@ -18,9 +18,14 @@ function Login() {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
 
+  const [checker, setCheker] = useState(false);
+
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    if (!login && !password) return;
+    if (!login && !password) {
+      setCheker(true);
+      return;
+    }
     Cookie.remove("key");
     const userBody = {
       username: login,
@@ -49,11 +54,13 @@ function Login() {
         <form onSubmit={(e) => handleSubmit(e)}>
           <TextField
             // name="name"
+            className={checker ? "login_no_value" : ""}
             label="Логин"
             onChange={(e: any) => setLogin(e.target.value)}
             value={login}
           />
           <TextField
+            className={checker ? "login_no_value" : ""}
             label="Пароль"
             type="password"
             onChange={(e: any) => setPassword(e.target.value)}

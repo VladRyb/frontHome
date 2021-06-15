@@ -13,6 +13,8 @@ import {
   Select,
 } from "@material-ui/core";
 import { DatePicker } from "@material-ui/pickers";
+import CreateSharpIcon from "@material-ui/icons/CreateSharp";
+import DeleteSharpIcon from "@material-ui/icons/DeleteSharp";
 import Loader from "../components/Loader/Loader";
 
 interface PriceState {
@@ -177,23 +179,35 @@ function Home() {
             <div className="last_title">
               <h3>Предыдушие показания</h3>
               {lastPeriod && (
-                <FormControl style={{ width: 200 }}>
-                  {/* <InputLabel id="demo-simple-select-label">Age</InputLabel> */}
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={lastPeriod || ""}
-                    onChange={(e) => {
-                      setLastPeriod(e.target.value);
-                    }}
-                  >
-                    {periods.map((elem: any) => (
-                      <MenuItem key={elem._id} value={elem}>
-                        {elem.date}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+                <div
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <FormControl style={{ width: 200 }}>
+                    {/* <InputLabel id="demo-simple-select-label">Age</InputLabel> */}
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      value={lastPeriod || ""}
+                      onChange={(e) => {
+                        setLastPeriod(e.target.value);
+                      }}
+                    >
+                      {periods.map((elem: any) => (
+                        <MenuItem key={elem._id} value={elem}>
+                          {elem.date}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <span>
+                    <span style={{ padding: "0px 12px" }}>
+                      <CreateSharpIcon />
+                    </span>
+                    <span style={{ padding: "0px 12px" }}>
+                      <DeleteSharpIcon />
+                    </span>
+                  </span>
+                </div>
               )}
             </div>
 

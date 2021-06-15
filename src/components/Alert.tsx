@@ -33,7 +33,7 @@ export const Alert = ({ textAlert, handleCloseAlert }: any) => {
       anchorOrigin={{ vertical: "top", horizontal: "right" }}
       classes={classes}
       open={textAlert}
-      // onClose={handleCloseAlert}
+      onClose={handleCloseAlert}
       message={textAlert}
       key={"topright"}
       autoHideDuration={5000}
