@@ -12,6 +12,12 @@ export const postPeriod = (data: any) => {
   });
 };
 
+export const editPeriod = (data: any) => {
+  return server.patch(`/period/${data._id}`, data).then(({ data }) => {
+    return data;
+  });
+};
+
 export const deletePeriod = (id: any) => {
   return server.delete(`/period/${id}`).then(({ data }) => {
     return data;

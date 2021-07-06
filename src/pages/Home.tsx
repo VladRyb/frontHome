@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
-import { getData, postPeriod } from "../api/endpoints/data";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Dialog,
@@ -19,6 +18,7 @@ import Loader from "../components/Loader/Loader";
 import api from "../api";
 import { alertShow } from "../redux/alertStore";
 import { useDispatch } from "react-redux";
+import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
 
 interface PriceState {
   [key: string]: string | number;
@@ -35,6 +35,23 @@ interface PriceState {
 interface ITitlePrice {
   title: string;
   key: string;
+}
+
+interface IPeriods {
+  _id: number;
+  date: string;
+  hot: string;
+  cold: string;
+  drainage: string;
+  electricity: string;
+}
+
+interface IData {
+  [key: string]: string | MaterialUiPickersDate | undefined;
+  date?: MaterialUiPickersDate;
+  hot?: string;
+  cold?: string;
+  electricity?: string;
 }
 
 const titlePrice = [
@@ -59,7 +76,7 @@ const titlePrice = [
     key: "electricity",
   },
   {
-    title: "Интертет",
+    title: "Интернет",
     key: "internet",
   },
 ];
@@ -84,45 +101,67 @@ const titlePeriod = [
 ];
 
 function Home() {
-  const data = useRef<any>(null);
+  // const data = useRef<any>(null);
   const dispatch = useDispatch();
+
+  const [data, setData] = useState<IData | null>(null);
 
   const [price, setPrice] = useState<PriceState | null>(null);
   const [lastPeriod, setLastPeriod] = useState<any>(null);
   const [money, setMoney] = useState<number | null>(null);
 
-  const [periods, setPeriods] = useState<any>(null);
+  const [periods, setPeriods] = useState<IPeriods[] | null>(null);
 
   const [open, setOpen] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
-  const [selectedDate, setSelectedDate] = React.useState(new Date());
 
-  const seveData = async () => {
+  const [typeModal, setTypeModal] = useState<"create" | "edit">("create");
+  // const [selectedDate, setSelectedDate] = React.useState(new Date());
+
+  const editData = (key: string, value: string | MaterialUiPickersDate) => {
+    setData((prev) => {
+      return { ...prev, [key]: value };
+    });
+  };
+
+  const saveData = async (data: IData) => {
+    console.log(data);
+
     if (
-      data.current[1].value.trim() === "" &&
-      data.current[2].value.trim() === "" &&
-      data.current[3].value.trim() === ""
+      data.cold?.trim() === "" &&
+      data.hot?.trim() === "" &&
+      data.electricity?.trim() === ""
     )
       return;
     try {
-      const response = await postPeriod({
-        date: data.current[0].value,
-        hot: data.current[1].value,
-        cold: data.current[2].value,
-        electricity: data.current[3].value,
-      });
+      let response;
+      if (typeModal === "create") response = await api.postPeriod(data);
+      else response = await api.editPeriod(data);
       setPeriods(response.period);
       setLastPeriod(response.period[0]);
       handleClose();
-      dispatch(alertShow({ textAlert: "Показания добавлены" }));
+      dispatch(
+        alertShow({
+          textAlert:
+            typeModal === "create"
+              ? "Показания добавлены"
+              : "Показания отредактированы",
+        })
+      );
     } catch (error) {
       handleClose();
     }
   };
 
-  const handleDateChange = (date: any) => {
-    setSelectedDate(date);
+  const handleDataEdit = () => {
+    setTypeModal("edit");
+    setData(lastPeriod);
+    setOpen(true);
   };
+
+  // const handleDateChange = (date: any) => {
+  //   setSelectedDate(date);
+  // };
 
   const calcSum = (price: any, periods: any) => {
     const delta = periods.slice(0, 2).reduce((acum: any, elem: any) => ({
@@ -145,7 +184,7 @@ function Home() {
 
   const fetchPrice = async () => {
     try {
-      const response = await getData();
+      const response = await api.getData();
       setPrice(response.price);
       setPeriods(response.period);
       setLastPeriod(response.period[0]);
@@ -153,6 +192,11 @@ function Home() {
   };
 
   const handleOpen = (): void => {
+    setTypeModal("create");
+    setData((prev) => {
+      return { ...prev, date: new Date() };
+    });
+
     setOpen(true);
   };
 
@@ -161,6 +205,7 @@ function Home() {
   };
 
   const handleClose = (): void => {
+    setData(null);
     setOpen(false);
   };
 
@@ -217,21 +262,25 @@ function Home() {
                     <Select
                       labelId="demo-simple-select-label"
                       id="demo-simple-select"
-                      value={lastPeriod || ""}
+                      value={lastPeriod._id || ""}
                       onChange={(e) => {
-                        setLastPeriod(e.target.value);
+                        const last = periods?.find(
+                          (item) => item._id === e.target.value
+                        );
+                        setLastPeriod(last);
                       }}
                     >
-                      {periods.map((elem: any) => (
-                        <MenuItem key={elem._id} value={elem}>
-                          {elem.date}
-                        </MenuItem>
-                      ))}
+                      {periods &&
+                        periods.map((elem) => (
+                          <MenuItem key={elem._id} value={elem._id}>
+                            {elem.date}
+                          </MenuItem>
+                        ))}
                     </Select>
                   </FormControl>
                   <span>
                     <span style={{ padding: "0px 12px" }}>
-                      {/* <CreateSharpIcon /> */}
+                      <CreateSharpIcon onClick={handleDataEdit} />
                     </span>
                     <span style={{ padding: "0px 12px" }}>
                       <DeleteSharpIcon onClick={handleOpenDelete} />
@@ -285,39 +334,79 @@ function Home() {
           open={open}
         >
           <DialogTitle id="customized-dialog-title">
-            Добавить новые показания
+            {typeModal === "create" ? (
+              <>Добавить новые показания</>
+            ) : (
+              <>Редактировать показаний</>
+            )}
           </DialogTitle>
-          <DialogContent dividers>
-            <form ref={data} className="modal_body">
-              <DatePicker
-                variant="inline"
-                openTo="year"
-                views={["year", "month"]}
-                label="Year and Month"
-                helperText="Start from year selection"
-                value={selectedDate}
-                onChange={handleDateChange}
-                style={{ margin: 24 }}
-              />
-              <FormControl style={{ margin: 24 }}>
-                <InputLabel id="login-label">{titlePrice[1].title}</InputLabel>
-                <Input />
-              </FormControl>
-              <FormControl style={{ margin: 24 }}>
-                <InputLabel id="login-label">{titlePrice[2].title}</InputLabel>
-                <Input />
-              </FormControl>
-              <FormControl style={{ margin: 24 }}>
-                <InputLabel id="login-label">{titlePrice[4].title}</InputLabel>
-                <Input />
-              </FormControl>
-            </form>
-          </DialogContent>
-          <DialogActions>
-            <Button autoFocus onClick={seveData} color="primary">
-              Сохранить
-            </Button>
-          </DialogActions>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (data) saveData(data);
+            }}
+          >
+            <DialogContent dividers>
+              <div className="modal_body">
+                <DatePicker
+                  variant="inline"
+                  openTo="month"
+                  views={["year", "month"]}
+                  label="Year and Month"
+                  helperText="Start from year selection"
+                  value={data?.date || new Date()}
+                  onChange={(date) => editData("date", date)}
+                  style={{ margin: 24 }}
+                  required
+                />
+                <FormControl style={{ margin: 24 }}>
+                  <InputLabel id="login-label">
+                    {titlePrice[1].title}
+                  </InputLabel>
+                  <Input
+                    onChange={(e) =>
+                      editData(titlePrice[1].key, e.target.value)
+                    }
+                    value={data?.hot || ""}
+                    required
+                  />
+                </FormControl>
+                <FormControl style={{ margin: 24 }}>
+                  <InputLabel id="login-label">
+                    {titlePrice[2].title}
+                  </InputLabel>
+                  <Input
+                    onChange={(e) =>
+                      editData(titlePrice[2].key, e.target.value)
+                    }
+                    value={data?.cold || ""}
+                    required
+                  />
+                </FormControl>
+                <FormControl style={{ margin: 24 }}>
+                  <InputLabel id="login-label">
+                    {titlePrice[4].title}
+                  </InputLabel>
+                  <Input
+                    onChange={(e) =>
+                      editData(titlePrice[4].key, e.target.value)
+                    }
+                    value={data?.electricity || ""}
+                    required
+                  />
+                </FormControl>
+              </div>
+            </DialogContent>
+            <DialogActions>
+              <Button
+                type="submit"
+                // onClick={seveData}
+                color="primary"
+              >
+                Сохранить
+              </Button>
+            </DialogActions>
+          </form>
         </Dialog>
       )}
       {openDelete && (
