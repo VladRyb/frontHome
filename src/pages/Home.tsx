@@ -16,6 +16,9 @@ import { DatePicker } from "@material-ui/pickers";
 import CreateSharpIcon from "@material-ui/icons/CreateSharp";
 import DeleteSharpIcon from "@material-ui/icons/DeleteSharp";
 import Loader from "../components/Loader/Loader";
+import api from "../api";
+import { alertShow } from "../redux/alertStore";
+import { useDispatch } from "react-redux";
 
 interface PriceState {
   [key: string]: string | number;
@@ -82,6 +85,7 @@ const titlePeriod = [
 
 function Home() {
   const data = useRef<any>(null);
+  const dispatch = useDispatch();
 
   const [price, setPrice] = useState<PriceState | null>(null);
   const [lastPeriod, setLastPeriod] = useState<any>(null);
@@ -90,6 +94,7 @@ function Home() {
   const [periods, setPeriods] = useState<any>(null);
 
   const [open, setOpen] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
   const [selectedDate, setSelectedDate] = React.useState(new Date());
 
   const seveData = async () => {
@@ -100,13 +105,16 @@ function Home() {
     )
       return;
     try {
-      await postPeriod({
+      const response = await postPeriod({
         date: data.current[0].value,
         hot: data.current[1].value,
         cold: data.current[2].value,
         electricity: data.current[3].value,
       });
+      setPeriods(response.period);
+      setLastPeriod(response.period[0]);
       handleClose();
+      dispatch(alertShow({ textAlert: "Показания добавлены" }));
     } catch (error) {
       handleClose();
     }
@@ -148,8 +156,30 @@ function Home() {
     setOpen(true);
   };
 
+  const handleOpenDelete = (): void => {
+    setOpenDelete(true);
+  };
+
   const handleClose = (): void => {
     setOpen(false);
+  };
+
+  const handleCloseDelete = (): void => {
+    setOpenDelete(false);
+  };
+
+  const handlerDeletePeriod = () => {
+    fetchDeletePeriod(lastPeriod._id);
+  };
+
+  const fetchDeletePeriod = async (id: string) => {
+    try {
+      const response = await api.deletePeriod(id);
+      setPeriods(response.period);
+      setLastPeriod(response.period[0]);
+      handleCloseDelete();
+      dispatch(alertShow({ textAlert: "Показания удалены" }));
+    } catch (error) {}
   };
 
   useEffect(() => {
@@ -201,10 +231,10 @@ function Home() {
                   </FormControl>
                   <span>
                     <span style={{ padding: "0px 12px" }}>
-                      <CreateSharpIcon />
+                      {/* <CreateSharpIcon /> */}
                     </span>
                     <span style={{ padding: "0px 12px" }}>
-                      <DeleteSharpIcon />
+                      <DeleteSharpIcon onClick={handleOpenDelete} />
                     </span>
                   </span>
                 </div>
@@ -286,6 +316,28 @@ function Home() {
           <DialogActions>
             <Button autoFocus onClick={seveData} color="primary">
               Сохранить
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
+      {openDelete && (
+        <Dialog
+          onClose={handleCloseDelete}
+          aria-labelledby="customized-dialog-title"
+          open={openDelete}
+          style={{ minWidth: 400 }}
+        >
+          <DialogTitle id="customized-dialog-title">
+            Удалить показания
+          </DialogTitle>
+          <DialogContent dividers>
+            <div style={{ minWidth: 400, padding: "12px 0px" }}>
+              Вы точно хотите удалить?
+            </div>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handlerDeletePeriod} color="primary">
+              Удалить
             </Button>
           </DialogActions>
         </Dialog>

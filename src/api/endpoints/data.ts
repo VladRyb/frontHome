@@ -11,3 +11,9 @@ export const postPeriod = (data: any) => {
     return data;
   });
 };
+
+export const deletePeriod = (id: any) => {
+  return server.delete(`/period/${id}`).then(({ data }) => {
+    return data;
+  });
+};

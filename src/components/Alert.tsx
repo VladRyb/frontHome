@@ -9,6 +9,8 @@ import {
 } from "@material-ui/core";
 import { TransitionProps } from "@material-ui/core/transitions/transition";
 import CloseIcon from "@material-ui/icons/Close";
+import { useDispatch, useSelector } from "react-redux";
+import { alertClose } from "../redux/alertStore";
 
 function SlideTransition(props: TransitionProps) {
   return <Slide {...props} direction="left" />;
@@ -25,16 +27,22 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export const Alert = ({ textAlert, handleCloseAlert }: any) => {
+export const Alert = () => {
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const alert = useSelector((store: any) => store.alert);
+
+  const handleCloseAlert = () => {
+    dispatch(alertClose());
+  };
 
   return (
     <Snackbar
       anchorOrigin={{ vertical: "top", horizontal: "right" }}
       classes={classes}
-      open={textAlert}
+      open={alert.textAlert}
       onClose={handleCloseAlert}
-      message={textAlert}
+      message={alert.textAlert}
       key={"topright"}
       autoHideDuration={5000}
       TransitionComponent={SlideTransition}

@@ -11,12 +11,14 @@ import Login from "./pages/Login";
 import { useSelector } from "react-redux";
 import Home from "./pages/Home";
 import Layout from "./components/Layout";
+import { Alert } from "./components/Alert";
 
 function App() {
   const isAuth = useSelector((state: any) => state.auth.isAuth);
 
   return (
     <BrowserRouter>
+      <Alert />
       <Switch>
         {isAuth && (
           <Route exact path="/">
