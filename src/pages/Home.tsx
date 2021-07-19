@@ -352,10 +352,19 @@ function Home() {
                   variant="inline"
                   openTo="month"
                   views={["year", "month"]}
-                  label="Year and Month"
+                  label="Месяц и год"
                   helperText="Start from year selection"
                   value={data?.date || new Date()}
-                  onChange={(date) => editData("date", date)}
+                  onChange={(date) => {
+                    console.log(date?.toString());
+                    editData(
+                      "date",
+                      `${date?.toLocaleString("en-US", {
+                        month: "short",
+                        year: "numeric",
+                      })}`
+                    );
+                  }}
                   style={{ margin: 24 }}
                   required
                 />
