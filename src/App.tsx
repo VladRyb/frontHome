@@ -1,4 +1,9 @@
 import React, { Suspense } from "react";
+import routes, { getHomePath } from "./routes";
+import { Alert } from "./components/Alert";
+import { useSelector } from "react-redux";
+import Layout from "./components/Layout";
+import Home from "./pages/Home";
 import {
   BrowserRouter,
   Switch,
@@ -6,12 +11,6 @@ import {
   Redirect,
   RouteComponentProps,
 } from "react-router-dom";
-import routes, { getHomePath } from "./routes";
-import Login from "./pages/Login";
-import { useSelector } from "react-redux";
-import Home from "./pages/Home";
-import Layout from "./components/Layout";
-import { Alert } from "./components/Alert";
 
 function App() {
   const isAuth = useSelector((state: any) => state.auth.isAuth);

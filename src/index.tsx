@@ -1,7 +1,7 @@
-import React, { Suspense } from "react";
+import React from "react";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { ThemeProvider } from "@mui/material/styles";
 import { Provider } from "react-redux";
 import { store } from "./redux/store";
 import ReactDOM from "react-dom";
