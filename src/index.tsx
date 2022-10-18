@@ -1,7 +1,7 @@
 import React, { Suspense } from "react";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { Provider } from "react-redux";
 import { store } from "./redux/store";
 import ReactDOM from "react-dom";
@@ -15,7 +15,7 @@ moment.locale("ru");
 
 ReactDOM.render(
   <Provider store={store}>
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
+    <LocalizationProvider dateAdapter={AdapterMoment}>
       <ThemeProvider theme={getTheme("dark")}>
         <App />
       </ThemeProvider>

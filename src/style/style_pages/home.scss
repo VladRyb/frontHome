@@ -5,30 +5,43 @@
 .home_top_block {
   display: flex;
   justify-content: space-between;
-  padding: 24px 24px 24px 24px;
+}
+
+.card_title {
+  font-weight: 600 !important;
+  margin-top: 0 !important;
+  margin-bottom: 16px !important;
 }
 
 .last_container {
-  width: 75%;
+  width: 70%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
-.last_title {
+.last_header {
   display: flex;
-  padding-left: 6px;
   justify-content: space-between;
+}
+
+.last_header_actions {
+  display: flex;
+  .button_group {
+    margin-left: 16px;
+  }
 }
 
 .last_block {
   display: flex;
   justify-content: space-between;
-  padding: 0px 8px;
-  margin-bottom: 24px;
   & div {
     display: flex;
     flex-direction: column;
+    .title {
+      display: flex;
+      align-items: center;
+    }
     & span {
       margin: 12px 0px;
     }
@@ -36,10 +49,11 @@
 }
 
 .price_container {
-  width: 15%;
-  background-color: #f7f7f71f;
-  padding: 0px 24px 24px 24px;
   min-width: 160px;
+  width: 25%;
+  .MuiCardContent-root {
+    background-color: #f7f7f71f;
+  }
 }
 
 .price_block {
