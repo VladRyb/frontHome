@@ -1,4 +1,8 @@
 import React, { useEffect, useState } from "react";
+import Loader from "../components/Loader/Loader";
+import api from "../api";
+import { alertShow } from "../redux/alertStore";
+import { useDispatch } from "react-redux";
 import {
   Button,
   Dialog,
@@ -10,15 +14,9 @@ import {
   InputLabel,
   MenuItem,
   Select,
-} from "@material-ui/core";
-import { DatePicker } from "@material-ui/pickers";
-import CreateSharpIcon from "@material-ui/icons/CreateSharp";
-import DeleteSharpIcon from "@material-ui/icons/DeleteSharp";
-import Loader from "../components/Loader/Loader";
-import api from "../api";
-import { alertShow } from "../redux/alertStore";
-import { useDispatch } from "react-redux";
-import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
+} from "@mui/material";
+import { Create, Delete } from "@mui/icons-material";
+import { DesktopDateTimePicker } from "@mui/lab";
 
 interface PriceState {
   [key: string]: string | number;
@@ -47,8 +45,7 @@ interface IPeriods {
 }
 
 interface IData {
-  [key: string]: string | MaterialUiPickersDate | undefined;
-  date?: MaterialUiPickersDate;
+  date?: any;
   hot?: string;
   cold?: string;
   electricity?: string;
@@ -118,7 +115,7 @@ function Home() {
   const [typeModal, setTypeModal] = useState<"create" | "edit">("create");
   // const [selectedDate, setSelectedDate] = React.useState(new Date());
 
-  const editData = (key: string, value: string | MaterialUiPickersDate) => {
+  const editData = (key: string, value: string) => {
     setData((prev) => {
       return { ...prev, [key]: value };
     });
@@ -249,7 +246,7 @@ function Home() {
   return (
     <div>
       <div className="home_container">
-        <div className="home_top_block box_shadow">
+        <div className="home_top_block app_card">
           <div className="last_container">
             <div className="last_title">
               <h3>Предыдушие показания</h3>
@@ -280,10 +277,10 @@ function Home() {
                   </FormControl>
                   <span>
                     <span style={{ padding: "0px 12px" }}>
-                      <CreateSharpIcon onClick={handleDataEdit} />
+                      <Create onClick={handleDataEdit} />
                     </span>
                     <span style={{ padding: "0px 12px" }}>
-                      <DeleteSharpIcon onClick={handleOpenDelete} />
+                      <Delete onClick={handleOpenDelete} />
                     </span>
                   </span>
                 </div>
@@ -348,14 +345,14 @@ function Home() {
           >
             <DialogContent dividers>
               <div className="modal_body">
-                <DatePicker
+                <DesktopDateTimePicker
                   variant="inline"
                   openTo="month"
                   views={["year", "month"]}
                   label="Месяц и год"
                   helperText="Start from year selection"
                   value={data?.date || new Date()}
-                  onChange={(date) => {
+                  onChange={(date: any) => {
                     console.log(date?.toString());
                     editData(
                       "date",

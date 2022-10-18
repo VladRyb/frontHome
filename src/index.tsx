@@ -4,36 +4,18 @@ import "./style/index.scss";
 import App from "./App";
 import { Provider } from "react-redux";
 import { store } from "./redux/store";
-import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
-import { MuiPickersUtilsProvider } from "@material-ui/pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import "moment/locale/ru";
+import moment from "moment";
 
-import DateFnsUtils from "@date-io/date-fns";
-
-const theme = createMuiTheme({
-  palette: {
-    type: "dark",
-    primary: {
-      main: "#ffffff",
-      contrastText: "#ffffff",
-      light: "#ffffff",
-      dark: "#ffffff",
-    },
-    text: {
-      primary: "#ffffff",
-      disabled: "#ffffff",
-    },
-  },
-});
+moment.locale("ru");
 
 ReactDOM.render(
   <Provider store={store}>
-    <ThemeProvider theme={theme}>
-      <MuiPickersUtilsProvider utils={DateFnsUtils}>
-        <Suspense fallback={<div>Loading... </div>}>
-          <App />
-        </Suspense>
-      </MuiPickersUtilsProvider>
-    </ThemeProvider>
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <App />
+    </LocalizationProvider>
   </Provider>,
   document.getElementById("root")
 );

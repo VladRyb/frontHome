@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import {
   BrowserRouter,
   Switch,
@@ -55,7 +55,9 @@ function App() {
                       exact={exact !== undefined ? exact : true}
                       path={path}
                       render={(props) => (
-                        <Component {...props} {...componentProps} />
+                        <Suspense fallback={<div>Loading... </div>}>
+                          <Component {...props} {...componentProps} />
+                        </Suspense>
                       )}
                     />
                   );

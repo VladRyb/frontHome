@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
 import { postLogin } from "../api/endpoints/auth";
 import { setUserCreate } from "../redux/authStore";
 import { getHomePath } from "../routes";
 import Cookie from "js-cookie";
-import { Button, TextField } from "@material-ui/core";
 import { alertShow } from "../redux/alertStore";
+import { useDispatch } from "react-redux";
+import { TextField } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
 
 function Login() {
   const dispatch = useDispatch();
@@ -37,29 +38,34 @@ function Login() {
       history.push(getHomePath());
     } catch (error) {
       console.log(error);
+      setCheker(true);
       dispatch(alertShow({ textAlert: "Неправильный логин или пароль" }));
     }
   };
 
   return (
     <div className="login_container">
-      <div className="login_form_block box_shadow">
+      <div className="login_form_block app_card">
         <form onSubmit={(e) => handleSubmit(e)}>
           <TextField
             // name="name"
-            className={checker ? "login_no_value" : ""}
             label="Логин"
             onChange={(e: any) => setLogin(e.target.value)}
             value={login}
+            error={checker}
+            variant={"outlined"}
           />
           <TextField
-            className={checker ? "login_no_value" : ""}
             label="Пароль"
             type="password"
             onChange={(e: any) => setPassword(e.target.value)}
             value={password}
+            error={checker}
+            variant={"outlined"}
           />
-          <Button type="submit">Войти</Button>
+          <LoadingButton type="submit" variant={"outlined"}>
+            Войти
+          </LoadingButton>
         </form>
       </div>
     </div>
