@@ -27,9 +27,6 @@ function App() {
             </Layout>
           </Route>
         )}
-        <Route exact path="/login">
-          <Login />
-        </Route>
 
         <Route>
           <Layout>

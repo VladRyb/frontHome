@@ -47,6 +47,13 @@ const getTheme = (mode: string): Theme =>
               },
             } as ComponentsOverrides["MuiCard"],
           },
+          MuiCardContent: {
+            styleOverrides: {
+              root: {
+                padding: 32,
+              },
+            } as ComponentsOverrides["MuiCardContent"],
+          },
 
           MuiListItemText: {
             styleOverrides: {
