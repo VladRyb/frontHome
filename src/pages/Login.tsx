@@ -3,17 +3,14 @@ import { Card, CardContent, Grid, TextField, Typography } from "@mui/material";
 import { setUserCreate } from "../redux/authStore";
 import { postLogin } from "../api/endpoints/auth";
 import { alertShow } from "../redux/alertStore";
+import { helperText } from "../helpers/options";
 import { useHistory } from "react-router";
 import { useDispatch } from "react-redux";
 import { LoadingButton } from "@mui/lab";
 import { getHomePath } from "../routes";
-import Cookie from "js-cookie";
 import { useFormik } from "formik";
+import Cookie from "js-cookie";
 import * as yup from "yup";
-
-const helperText = {
-  required: "Обязательное поле",
-};
 
 const validationSchema = yup.object({
   username: yup.string().trim().required(helperText.required),

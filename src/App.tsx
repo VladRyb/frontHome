@@ -3,7 +3,7 @@ import routes, { getHomePath } from "./routes";
 import { Alert } from "./components/Alert";
 import { useSelector } from "react-redux";
 import Layout from "./components/Layout";
-import Home from "./pages/Home";
+import Home from "./pages/Home/Home";
 import {
   BrowserRouter,
   Switch,

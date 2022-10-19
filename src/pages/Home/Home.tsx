@@ -1,29 +1,26 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Create, Delete, ElectricBolt, Opacity } from "@mui/icons-material";
-import { DesktopDatePicker } from "@mui/x-date-pickers";
-import Loader from "../components/Loader/Loader";
-import { alertShow } from "../redux/alertStore";
+import Loader from "../../components/Loader/Loader";
+import ModalDelete from "./components/ModalDelete";
+import { alertShow } from "../../redux/alertStore";
+import CardPrice from "./components/CardPrice";
+import ModalData from "./components/ModalData";
 import { useDispatch } from "react-redux";
-import { LoadingButton } from "@mui/lab";
-import api from "../api";
+import moment from "moment";
+import api from "../../api";
 import {
   Box,
   Button,
   Card,
   CardContent,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   FormControl,
   IconButton,
   MenuItem,
   Select,
-  TextField,
   Typography,
 } from "@mui/material";
 
-interface PriceState {
+export interface PriceState {
   [key: string]: string | number;
   cold: string | number;
   drainage: string | number;
@@ -35,12 +32,7 @@ interface PriceState {
   _id: string | number;
 }
 
-interface ITitlePrice {
-  title: string;
-  key: string;
-}
-
-interface IPeriods {
+interface Periods {
   _id: number;
   date: string;
   hot: string;
@@ -49,39 +41,12 @@ interface IPeriods {
   electricity: string;
 }
 
-interface IData {
-  date?: any;
+interface Data {
+  date?: Date;
   hot?: string;
   cold?: string;
   electricity?: string;
 }
-
-const titlePrice = [
-  {
-    title: "Аренда",
-    key: "rent",
-  },
-  {
-    title: "Гор.вода",
-    key: "hot",
-  },
-  {
-    title: "Хол.вода",
-    key: "cold",
-  },
-  {
-    title: "Водоотвод",
-    key: "drainage",
-  },
-  {
-    title: "Свет",
-    key: "electricity",
-  },
-  {
-    title: "Интернет",
-    key: "internet",
-  },
-];
 
 const titlePeriod = [
   {
@@ -107,47 +72,27 @@ const titlePeriod = [
 ];
 
 function Home() {
-  // const data = useRef<any>(null);
   const dispatch = useDispatch();
-
-  const [data, setData] = useState<IData | null>(null);
 
   const [price, setPrice] = useState<PriceState | null>(null);
   const [lastPeriod, setLastPeriod] = useState<any>(null);
 
-  const [periods, setPeriods] = useState<IPeriods[] | null>(null);
+  const [periods, setPeriods] = useState<Periods[] | null>(null);
 
   const [open, setOpen] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
 
   const [typeModal, setTypeModal] = useState<"create" | "edit">("create");
 
-  const editData = (key: string, value: string) => {
-    setData((prev) => {
-      return { ...prev, [key]: value };
-    });
-  };
-
-  const saveData = async (data: IData) => {
-    if (
-      data.cold?.trim() === "" &&
-      data.hot?.trim() === "" &&
-      data.electricity?.trim() === ""
-    )
-      return;
+  const fetchCreate = async (data: Omit<Data, "date"> & { date: string }) => {
     try {
-      let response;
-      if (typeModal === "create") response = await api.postPeriod(data);
-      else response = await api.editPeriod(data);
+      const response = await api.postPeriod(data);
       setPeriods(response.period);
       setLastPeriod(response.period[0]);
       handleClose();
       dispatch(
         alertShow({
-          textAlert:
-            typeModal === "create"
-              ? "Показания добавлены"
-              : "Показания отредактированы",
+          textAlert: "Показания добавлены",
         })
       );
     } catch (error) {
@@ -155,15 +100,36 @@ function Home() {
     }
   };
 
-  const handleDataEdit = () => {
-    setTypeModal("edit");
-    setData(lastPeriod);
-    setOpen(true);
+  const fetchUpdate = async (data: Omit<Data, "date"> & { date: string }) => {
+    try {
+      const response = await api.patchPeriod(data);
+      setPeriods(response.period);
+      setLastPeriod(response.period[0]);
+      handleClose();
+      dispatch(
+        alertShow({
+          textAlert: "Показания изменены",
+        })
+      );
+    } catch (error) {
+      handleClose();
+    }
   };
 
-  // const handleDateChange = (date: any) => {
-  //   setSelectedDate(date);
-  // };
+  const handelSubmitModalData = useCallback(
+    (value: Data) => {
+      const data = { ...value, date: moment(value?.date).format("MMMM yyyy") };
+      if (typeModal === "create") fetchCreate(data);
+      if (typeModal === "edit") fetchUpdate(data);
+    },
+    // eslint-disable-next-line
+    [typeModal]
+  );
+
+  const handleDataEdit = () => {
+    setTypeModal("edit");
+    setOpen(true);
+  };
 
   const calcSum = (price: any, periods: any) => {
     const delta = periods.slice(0, 2).reduce((acum: any, elem: any) => ({
@@ -195,10 +161,6 @@ function Home() {
 
   const handleOpen = (): void => {
     setTypeModal("create");
-    setData((prev) => {
-      return { ...prev, date: new Date() };
-    });
-
     setOpen(true);
   };
 
@@ -206,14 +168,13 @@ function Home() {
     setOpenDelete(true);
   };
 
-  const handleClose = (): void => {
-    setData(null);
+  const handleClose = useCallback((): void => {
     setOpen(false);
-  };
+  }, []);
 
-  const handleCloseDelete = (): void => {
+  const handleCloseDelete = useCallback((): void => {
     setOpenDelete(false);
-  };
+  }, []);
 
   const handlerDeletePeriod = () => {
     fetchDeletePeriod(lastPeriod._id);
@@ -320,141 +281,26 @@ function Home() {
               </div>
             </div>
 
-            <Card className="price_container">
-              <CardContent>
-                <Typography variant="h6" className="card_title">
-                  Тариф
-                </Typography>
-                {price && (
-                  <div className="price_block">
-                    {titlePrice?.map((item: ITitlePrice, i) => (
-                      <div key={item?.key}>
-                        <span>{item?.title}</span>
-                        <span>{price?.[item?.key]} руб.</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+            <CardPrice price={price} />
           </CardContent>
         </Card>
         <div></div>
       </div>
       {open && (
-        <Dialog
-          onClose={handleClose}
-          aria-labelledby="customized-dialog-title"
+        <ModalData
           open={open}
-        >
-          <DialogTitle id="customized-dialog-title">
-            {typeModal === "create" ? (
-              <>Добавить новые показания</>
-            ) : (
-              <>Редактировать показаний</>
-            )}
-          </DialogTitle>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (data) saveData(data);
-            }}
-          >
-            <DialogContent dividers>
-              <div className="modal_body">
-                <DesktopDatePicker
-                  openTo="month"
-                  views={["year", "month"]}
-                  label="Месяц и год"
-                  value={data?.date || new Date()}
-                  onChange={(date: any) => {
-                    console.log(date?.toString());
-                    editData(
-                      "date",
-                      `${date?.toLocaleString("en-US", {
-                        month: "short",
-                        year: "numeric",
-                      })}`
-                    );
-                  }}
-                  renderInput={(props: any) => {
-                    props = {
-                      ...props,
-                      inputProps: {
-                        ...props.inputProps,
-                        placeholder: "дд.мм.гггг",
-                      },
-                    };
-
-                    return (
-                      <TextField
-                        {...props}
-                        sx={{ height: 78 }}
-                        required
-                        label="Дата записи"
-                        type="date"
-                        fullWidth
-                        helperText=" "
-                        variant="outlined"
-                      />
-                    );
-                  }}
-                />
-                <TextField
-                  label={titlePrice[1].title}
-                  onChange={(e) => editData(titlePrice[1].key, e.target.value)}
-                  value={data?.hot || ""}
-                  required
-                  variant="outlined"
-                  helperText={" "}
-                />
-                <TextField
-                  label={titlePrice[2].title}
-                  onChange={(e) => editData(titlePrice[2].key, e.target.value)}
-                  value={data?.cold || ""}
-                  required
-                  variant="outlined"
-                  helperText={" "}
-                />
-                <TextField
-                  label={titlePrice[4].title}
-                  onChange={(e) => editData(titlePrice[4].key, e.target.value)}
-                  value={data?.electricity || ""}
-                  required
-                  variant="outlined"
-                  helperText={" "}
-                />
-              </div>
-            </DialogContent>
-            <DialogActions>
-              <LoadingButton type="submit" variant="contained">
-                Сохранить
-              </LoadingButton>
-            </DialogActions>
-          </form>
-        </Dialog>
+          handleClose={handleClose}
+          onSubmit={handelSubmitModalData}
+          typeModal={typeModal}
+          initState={lastPeriod}
+        />
       )}
       {openDelete && (
-        <Dialog
-          onClose={handleCloseDelete}
-          aria-labelledby="customized-dialog-title"
+        <ModalDelete
           open={openDelete}
-          style={{ minWidth: 400 }}
-        >
-          <DialogTitle id="customized-dialog-title">
-            Удалить показания
-          </DialogTitle>
-          <DialogContent dividers>
-            <div style={{ minWidth: 400, padding: "12px 0px" }}>
-              Вы точно хотите удалить?
-            </div>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handlerDeletePeriod} color="primary">
-              Удалить
-            </Button>
-          </DialogActions>
-        </Dialog>
+          handleClose={handleCloseDelete}
+          handleDelete={handlerDeletePeriod}
+        />
       )}
     </div>
   );

@@ -15,7 +15,7 @@ export const Alert = () => {
   return (
     <Snackbar
       anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      open={alert.textAlert}
+      open={!!alert.textAlert}
       onClose={handleCloseAlert}
       message={alert.textAlert}
       key={"topright"}
