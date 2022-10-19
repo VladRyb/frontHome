@@ -1,4 +1,9 @@
-export const titlePrice = [
+type TitlePrice = {
+  title: string;
+  key: "rent" | "hot" | "cold" | "drainage" | "electricity" | "internet";
+};
+
+export const titlePrice: TitlePrice[] = [
   {
     title: "Аренда",
     key: "rent",

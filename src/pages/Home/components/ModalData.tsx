@@ -11,17 +11,18 @@ import { DesktopDatePicker } from "@mui/x-date-pickers";
 import { LoadingButton } from "@mui/lab";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import moment from "moment";
 
 interface Props {
   handleClose: () => void;
   open: boolean;
   typeModal: "create" | "edit";
   onSubmit: (value: FormikTypeShema) => void;
-  initState: FormikTypeShema;
+  initState: FormikTypeShema | null;
 }
 
 const validationSchema = yup.object({
-  date: yup.date().required(helperText.required),
+  date: yup.string().required(helperText.required),
   hot: yup.string().trim().required(helperText.required),
   cold: yup.string().trim().required(helperText.required),
   electricity: yup.string().trim().required(helperText.required),
@@ -33,7 +34,7 @@ const ModalData = React.memo(
   ({ handleClose, open, typeModal, onSubmit, initState }: Props) => {
     const formik = useFormik({
       initialValues: {
-        date: new Date(),
+        date: moment().toISOString(),
         hot: "",
         cold: "",
         electricity: "",
@@ -43,7 +44,7 @@ const ModalData = React.memo(
     });
 
     useEffect(() => {
-      if (typeModal === "edit") {
+      if (typeModal === "edit" && initState) {
         formik.setValues(initState);
       }
     }, [typeModal]);
@@ -71,10 +72,10 @@ const ModalData = React.memo(
                 onChange={(date) => {
                   formik.setValues({
                     ...formik.values,
-                    date: new Date(date?.toISOString() || ""),
+                    date: date?.toISOString() || "",
                   });
                 }}
-                value={formik.values.date}
+                value={moment(formik.values.date)}
                 renderInput={(props: any) => {
                   props = {
                     ...props,

@@ -1,8 +1,7 @@
 import { Card, CardContent, Typography } from "@mui/material";
 import React from "react";
 import { titlePrice } from "../../../helpers/options";
-import { PriceState } from "../Home";
-
+import { PriceState } from "../../../interface/home";
 interface ITitlePrice {
   title: string;
   key: string;

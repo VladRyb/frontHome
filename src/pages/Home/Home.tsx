@@ -6,7 +6,6 @@ import { alertShow } from "../../redux/alertStore";
 import CardPrice from "./components/CardPrice";
 import ModalData from "./components/ModalData";
 import { useDispatch } from "react-redux";
-import moment from "moment";
 import api from "../../api";
 import {
   Box,
@@ -19,36 +18,10 @@ import {
   Select,
   Typography,
 } from "@mui/material";
+import { Data, Periods, PriceState, TitlePeriod } from "../../interface/home";
+import moment from "moment";
 
-export interface PriceState {
-  [key: string]: string | number;
-  cold: string | number;
-  drainage: string | number;
-  electricity: string | number;
-  hot: string | number;
-  internet: string | number;
-  rent: string | number;
-  __v: string | number;
-  _id: string | number;
-}
-
-interface Periods {
-  _id: number;
-  date: string;
-  hot: string;
-  cold: string;
-  drainage: string;
-  electricity: string;
-}
-
-interface Data {
-  date?: Date;
-  hot?: string;
-  cold?: string;
-  electricity?: string;
-}
-
-const titlePeriod = [
+const titlePeriod: TitlePeriod[] = [
   {
     title: "Гор.вода",
     key: "hot",
@@ -75,7 +48,7 @@ function Home() {
   const dispatch = useDispatch();
 
   const [price, setPrice] = useState<PriceState | null>(null);
-  const [lastPeriod, setLastPeriod] = useState<any>(null);
+  const [lastPeriod, setLastPeriod] = useState<Periods | null>(null);
 
   const [periods, setPeriods] = useState<Periods[] | null>(null);
 
@@ -84,7 +57,7 @@ function Home() {
 
   const [typeModal, setTypeModal] = useState<"create" | "edit">("create");
 
-  const fetchCreate = async (data: Omit<Data, "date"> & { date: string }) => {
+  const fetchCreate = async (data: Data) => {
     try {
       const response = await api.postPeriod(data);
       setPeriods(response.period);
@@ -100,7 +73,7 @@ function Home() {
     }
   };
 
-  const fetchUpdate = async (data: Omit<Data, "date"> & { date: string }) => {
+  const fetchUpdate = async (data: Omit<Periods, "drainage">) => {
     try {
       const response = await api.patchPeriod(data);
       setPeriods(response.period);
@@ -118,9 +91,11 @@ function Home() {
 
   const handelSubmitModalData = useCallback(
     (value: Data) => {
-      const data = { ...value, date: moment(value?.date).format("MMMM yyyy") };
-      if (typeModal === "create") fetchCreate(data);
-      if (typeModal === "edit") fetchUpdate(data);
+      console.log(value);
+
+      if (typeModal === "create") fetchCreate(value);
+      if (typeModal === "edit" && lastPeriod)
+        fetchUpdate({ _id: lastPeriod?._id, ...value });
     },
     // eslint-disable-next-line
     [typeModal]
@@ -177,10 +152,10 @@ function Home() {
   }, []);
 
   const handlerDeletePeriod = () => {
-    fetchDeletePeriod(lastPeriod._id);
+    lastPeriod && fetchDeletePeriod(lastPeriod?._id);
   };
 
-  const fetchDeletePeriod = async (id: string) => {
+  const fetchDeletePeriod = async (id: Periods["_id"]) => {
     try {
       const response = await api.deletePeriod(id);
       setPeriods(response.period);
@@ -193,7 +168,7 @@ function Home() {
   const money = useMemo(() => {
     if (periods && periods.length !== 0) {
       const indexPeriod = periods.findIndex(
-        (item: any) => item._id === lastPeriod._id
+        (item) => item._id === lastPeriod?._id
       );
       const newPeriods = periods.slice(indexPeriod, indexPeriod + 2);
       return calcSum(price, newPeriods);
@@ -226,16 +201,17 @@ function Home() {
                         id="simple-select"
                         value={lastPeriod?._id || ""}
                         onChange={(e) => {
-                          const last = periods?.find(
-                            (item) => item?._id === e.target.value
-                          );
+                          const last =
+                            periods?.find(
+                              (item) => item?._id === e.target.value
+                            ) || null;
                           setLastPeriod(last);
                         }}
                       >
                         {periods &&
                           periods?.map((elem) => (
                             <MenuItem key={elem?._id} value={elem?._id}>
-                              {elem?.date}
+                              {moment(elem?.date).format("MMMM yyyy")}
                             </MenuItem>
                           ))}
                       </Select>
@@ -267,7 +243,7 @@ function Home() {
               )}
               <div className="last_block_bot">
                 <div>
-                  <h4>Сумма: {money} руб.</h4>
+                  <h4>Сумма: {money?.toFixed(0)} руб.</h4>
                 </div>
                 <div>
                   <Button
