@@ -309,8 +309,12 @@ function Home() {
                   <h4>Сумма: {money} руб.</h4>
                 </div>
                 <div>
-                  <Button variant="contained" onClick={handleOpen}>
-                    Добавить новые показания
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleOpen}
+                  >
+                    Добавить
                   </Button>
                 </div>
               </div>

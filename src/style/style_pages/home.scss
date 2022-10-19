@@ -14,15 +14,18 @@
 }
 
 .last_container {
-  width: 70%;
+  width: auto;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  margin-right: 16px;
+  flex: 1;
 }
 
 .last_header {
   display: flex;
   justify-content: space-between;
+  margin-bottom: 16px;
 }
 
 .last_header_actions {
@@ -35,6 +38,7 @@
 .last_block {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
   & div {
     display: flex;
     flex-direction: column;
@@ -49,11 +53,8 @@
 }
 
 .price_container {
-  min-width: 160px;
-  width: 25%;
-  .MuiCardContent-root {
-    background-color: #f7f7f71f;
-  }
+  min-width: 250px;
+  background-color: #f7f7f71f !important;
 }
 
 .price_block {
@@ -78,11 +79,29 @@
   margin: 24px 56px 36px 56px;
 }
 
-@media screen and (max-width: 450px) {
+@media screen and (max-width: 1080px) {
+  .last_header {
+    flex-direction: column;
+  }
+  .last_header_actions .button_group {
+    display: flex;
+  }
+}
+@media screen and (max-width: 780px) {
   .home_top_block {
     padding: 8px;
     flex-direction: column;
   }
+
+  .last_block_bot {
+    flex-direction: column;
+    margin-bottom: 16px;
+  }
+  .last_title {
+    flex-direction: column;
+  }
+}
+@media screen and (max-width: 450px) {
   .home_container {
     margin-top: 1rem;
   }
@@ -90,23 +109,16 @@
   .last_container {
     width: 100%;
   }
-  .last_title {
+
+  .last_block {
     flex-direction: column;
-  }
-  .last_block_bot {
-    flex-direction: column;
-    & h4 {
-      margin-left: 6px;
-    }
-    & button {
-      background-color: #f7f7f71f;
-      margin-bottom: 24px;
+    div {
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: space-between;
     }
   }
-  .price_container {
-    width: auto;
-    padding: 8px;
-  }
+
   .modal_body {
     width: auto;
     padding: 8px;

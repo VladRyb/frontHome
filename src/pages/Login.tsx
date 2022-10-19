@@ -8,51 +8,60 @@ import { useDispatch } from "react-redux";
 import { LoadingButton } from "@mui/lab";
 import { getHomePath } from "../routes";
 import Cookie from "js-cookie";
+import { useFormik } from "formik";
+import * as yup from "yup";
+
+const helperText = {
+  required: "Обязательное поле",
+};
+
+const validationSchema = yup.object({
+  username: yup.string().trim().required(helperText.required),
+  password: yup.string().trim().required(helperText.required),
+});
+
+type FormikTypeShema = yup.InferType<typeof validationSchema>;
 
 function Login() {
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const [login, setLogin] = useState("");
-  const [password, setPassword] = useState("");
-
-  const [checker, setCheker] = useState(false);
-
   const [loader, setLoader] = useState(false);
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
+  const handleSubmit = async (value: FormikTypeShema) => {
     setLoader(true);
-    if (!login && !password) {
-      setCheker(true);
-      return;
-    }
     Cookie.remove("key");
-    const userBody = {
-      username: login,
-      password: password,
-    };
     try {
-      const userState = await postLogin(userBody);
+      const userState = await postLogin(value);
       Cookie.set("key", userState.token);
       dispatch(setUserCreate(userState.user));
-      setLogin("");
-      setPassword("");
       history.push(getHomePath());
     } catch (error) {
       console.log(error);
-      setCheker(true);
       dispatch(alertShow({ textAlert: "Неправильный логин или пароль" }));
+      formik.setErrors({
+        username: "Проверьте логин",
+        password: "Проверьте пароль",
+      });
     } finally {
       setLoader(false);
     }
   };
 
+  const formik = useFormik({
+    initialValues: {
+      username: "",
+      password: "",
+    },
+    validationSchema,
+    onSubmit: handleSubmit,
+  });
+
   return (
     <div className="login_container">
       <Card>
         <CardContent className={"login_form_block"}>
-          <form onSubmit={(e) => handleSubmit(e)}>
+          <form onSubmit={formik.handleSubmit}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <Typography variant="h5" className="login_form_title">
@@ -62,26 +71,39 @@ function Login() {
               <Grid item xs={12}>
                 <TextField
                   label="Логин"
-                  disabled={loader}
-                  onChange={(e: any) => setLogin(e.target.value)}
-                  value={login}
-                  error={checker}
-                  variant={"outlined"}
+                  name={"username"}
+                  autoFocus
                   fullWidth
-                  helperText={" "}
+                  variant={"outlined"}
+                  disabled={loader}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.username}
+                  error={
+                    formik.touched.username && Boolean(formik.errors.username)
+                  }
+                  helperText={
+                    (formik.touched.username && formik.errors.username) || " "
+                  }
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
                   label="Пароль"
                   type="password"
-                  disabled={loader}
-                  onChange={(e: any) => setPassword(e.target.value)}
-                  value={password}
-                  error={checker}
                   variant={"outlined"}
                   fullWidth
-                  helperText={" "}
+                  disabled={loader}
+                  name={"password"}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.password}
+                  error={
+                    formik.touched.password && Boolean(formik.errors.password)
+                  }
+                  helperText={
+                    (formik.touched.password && formik.errors.password) || " "
+                  }
                 />
               </Grid>
               <Grid item xs={12}>

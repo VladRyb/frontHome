@@ -32,7 +32,10 @@
 
 @media screen and (max-width: 450px) {
   .login_form_block {
-    width: 100%;
+    width: auto;
+  }
+  .login_container {
+    align-items: flex-start;
   }
 }
 
