@@ -11,6 +11,7 @@ import {
   Redirect,
   RouteComponentProps,
 } from "react-router-dom";
+import Loader from "./components/Loader/Loader";
 
 function App() {
   const isAuth = useSelector((state: any) => state.auth.isAuth);
@@ -51,7 +52,7 @@ function App() {
                       exact={exact !== undefined ? exact : true}
                       path={path}
                       render={(props) => (
-                        <Suspense fallback={<div>Loading... </div>}>
+                        <Suspense fallback={<Loader />}>
                           <Component {...props} {...componentProps} />
                         </Suspense>
                       )}

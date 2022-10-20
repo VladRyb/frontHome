@@ -69,7 +69,6 @@ function Login() {
                 <TextField
                   label="Логин"
                   name={"username"}
-                  autoFocus
                   fullWidth
                   variant={"outlined"}
                   disabled={loader}
