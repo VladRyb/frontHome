@@ -91,8 +91,6 @@ function Home() {
 
   const handelSubmitModalData = useCallback(
     (value: Data) => {
-      console.log(value);
-
       if (typeModal === "create") fetchCreate(value);
       if (typeModal === "edit" && lastPeriod)
         fetchUpdate({ _id: lastPeriod?._id, ...value });
@@ -117,8 +115,7 @@ function Home() {
       Number(price.hot) * delta.hot +
       Number(price.cold) * delta.cold +
       Number(price.electricity) * delta.electricity +
-      Number(price.drainage) * delta.cold +
-      Number(price.drainage) * delta.cold +
+      Number(price.drainage) * (delta.cold + delta.hot) +
       Number(price.rent) +
       Number(price.internet);
 
@@ -243,7 +240,7 @@ function Home() {
               )}
               <div className="last_block_bot">
                 <div>
-                  <h4>Сумма: {money?.toFixed(0)} руб.</h4>
+                  <h4>Сумма: {money} руб.</h4>
                 </div>
                 <div>
                   <Button
