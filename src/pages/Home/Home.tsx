@@ -104,18 +104,33 @@ function Home() {
     setOpen(true);
   };
 
+  const delta = useMemo((): any => {
+    if (periods && periods.length !== 0) {
+      const indexPeriod = periods.findIndex(
+        (item) => item._id === lastPeriod?._id
+      );
+      const newPeriods = periods.slice(indexPeriod, indexPeriod + 2);
+      if (newPeriods.length) {
+        const res = newPeriods?.reduce((acum: any, elem: any): any => ({
+          hot: acum.hot - elem.hot,
+          cold: acum.cold - elem.cold,
+          electricity: acum.electricity - elem.electricity,
+          drainage: acum.drainage - elem.drainage,
+        }));
+        return res;
+      }
+    }
+    return;
+  }, [periods, lastPeriod]);
+
   const calcSum = (price: any, periods: any) => {
-    const delta = periods.slice(0, 2).reduce((acum: any, elem: any) => ({
-      hot: acum.hot - elem.hot,
-      cold: acum.cold - elem.cold,
-      electricity: acum.electricity - elem.electricity,
-    }));
+    if (!delta) return 0;
 
     const sum =
       Number(price.hot) * delta.hot +
       Number(price.cold) * delta.cold +
       Number(price.electricity) * delta.electricity +
-      Number(price.drainage) * (delta.cold + delta.hot) +
+      Number(price.drainage) * delta.drainage +
       Number(price.rent) +
       Number(price.internet);
 
@@ -234,6 +249,7 @@ function Home() {
                         {elem.icon}
                       </span>
                       <span>{lastPeriod?.[elem?.key]}</span>
+                      <span>{delta?.[elem?.key]}</span>
                     </div>
                   ))}
                 </div>
