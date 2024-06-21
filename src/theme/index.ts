@@ -14,11 +14,8 @@ const getTheme = (mode: string): Theme =>
           MuiButton: {
             styleOverrides: {
               root: {
-                fontSize: "1rem",
                 fontWeight: 400,
                 borderRadius: 5,
-                paddingTop: 10,
-                paddingBottom: 10,
               },
               containedSecondary: mode === "light" ? { color: "white" } : {},
             } as ComponentsOverrides["MuiButton"],

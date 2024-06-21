@@ -208,7 +208,7 @@ function Home() {
                 </Typography>
                 {lastPeriod && (
                   <div className="last_header_actions">
-                    <FormControl style={{ width: 200 }}>
+                    <FormControl size="small" style={{ width: 200 }}>
                       <Select
                         id="simple-select"
                         value={lastPeriod?._id || ""}
@@ -230,10 +230,10 @@ function Home() {
                     </FormControl>
                     <Box className="button_group">
                       <IconButton onClick={handleDataEdit}>
-                        <Create fontSize="large" />
+                        <Create fontSize="inherit" />
                       </IconButton>
                       <IconButton onClick={handleOpenDelete}>
-                        <Delete fontSize="large" color="error" />
+                        <Delete fontSize="inherit" color="error" />
                       </IconButton>
                     </Box>
                   </div>
@@ -260,6 +260,7 @@ function Home() {
                 </div>
                 <div>
                   <Button
+                    disableElevation
                     variant="contained"
                     color="primary"
                     onClick={handleOpen}

@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Dialog,
   DialogActions,
@@ -19,13 +20,13 @@ const ModalDelete = React.memo(({ handleClose, open, handleDelete }: Props) => {
       onClose={handleClose}
       aria-labelledby="customized-dialog-title"
       open={open}
-      style={{ minWidth: 400 }}
+      sx={{ minWidth: 1 }}
     >
       <DialogTitle id="customized-dialog-title">Удалить показания</DialogTitle>
       <DialogContent dividers>
-        <div style={{ minWidth: 400, padding: "12px 0px" }}>
+        <Box sx={{ minWidth: { sm: 1, md: 400 }, padding: "12px 0px" }}>
           Вы точно хотите удалить?
-        </div>
+        </Box>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleDelete} color="error" variant="contained">
